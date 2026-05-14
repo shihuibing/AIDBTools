@@ -85,9 +85,9 @@
 
 | 版本 | 下载地址 | 大小 |
 |------|---------|------|
-| v1.1.25（最新版） | [点击下载 AIDBTools_v1.1.25_windows.exe](https://github.com/shihuibing/AIDBTools/releases) | 149MB |
+| v1.1.25（最新版） | [👈 点击下载 AIDBTools_v1.1.25_windows.exe](https://github.com/shihuibing/AIDBTools/releases/download/v1.1.25/AIDBTools_v1.1.25_windows.exe) | 149MB |
 
-> 💡 exe 文件过大，存放在 **GitHub Releases** 页面，请前往上方链接下载
+> exe 文件通过 **GitHub Releases** 分发，直接点击上方链接即可下载
 
 ---
 
@@ -95,7 +95,7 @@
 
 | 平台 | 安装方式 | 说明 |
 |------|---------|------|
-| Windows 10/11 | [直接下载 exe（见上方）](https://github.com/shihuibing/AIDBTools/releases) / 源码运行 | 149MB，无需安装，双击即用 |
+| Windows 10/11 | [直接下载 exe](https://github.com/shihuibing/AIDBTools/releases/download/v1.1.25/AIDBTools_v1.1.25_windows.exe) / 源码运行 | 149MB，无需安装，双击即用 |
 | Linux x86_64 | 源码运行 / `build_linux.sh` 打包 | Ubuntu 20.04+、CentOS 7+ |
 | 银河麒麟 V10 ARM | `install_kylin.sh` | aarch64，已测试 |
 | 银河麒麟 V10 x86 | `build_kylin_x86.sh` | 含离线包构建方式 |
