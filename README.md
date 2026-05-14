@@ -14,6 +14,7 @@
 [![PySide6](https://img.shields.io/badge/UI-PySide6-41CD52.svg)](https://doc.qt.io/qtforpython/)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20%E9%BA%92%E9%BA%9F-lightgrey.svg)](#%E5%B9%B3%E5%8F%B0%E6%94%AF%E6%8C%81)
 [![Version](https://img.shields.io/badge/Version-1.1.25-brightgreen.svg)](CHANGELOG.md)
+[![GitHub Stars](https://img.shields.io/github/stars/shihuibing/AIDBTools.svg?style=social)](https://github.com/shihuibing/AIDBTools)
 
 [快速开始](#快速开始) · [功能特性](#功能特性) · [数据库支持](#数据库支持) · [截图](#截图) · [开发计划](#开发计划) · [贡献](#贡献)
 
@@ -101,7 +102,7 @@
 
 ```bash
 # 克隆仓库
-git clone https://github.com/YOUR_USERNAME/AIDBTools.git
+git clone https://github.com/shihuibing/AIDBTools.git
 cd AIDBTools
 
 # 安装依赖（Windows）
