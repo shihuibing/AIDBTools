@@ -1,0 +1,33 @@
+# Linux 版依赖（银河麒麟 V10 / 统信UOS / Deepin / Ubuntu / CentOS）
+# 架构：x86_64 / aarch64 (ARM)
+# 安装：pip install -r requirements_linux.txt
+
+# ── UI（银河麒麟/统信UOS 推荐使用 PySide6，避免许可风险）────────────
+# 选项1：PySide6（推荐，LGPL 许可，无法律风险）
+PySide6>=6.6.0
+
+# 选项2：PyQt5（兼容性备选，用于仅预装 PyQt5 的国产系统）
+PyQt5>=5.15.0
+
+# ── 数据库驱动 ───────────────────────────────────────────────
+sqlalchemy>=2.0
+pymysql>=1.1              # MySQL / MariaDB
+psycopg2-binary>=2.9      # PostgreSQL / 金仓 / GaussDB
+pymssql>=2.2              # SQL Server（Linux 替代 pyodbc）
+oracledb>=2.0             # Oracle
+pyodbc>=5.0               # 星环 ODBC（已安装 ODBC 驱动时可用）
+
+# ── 星环 JDBC（需要 Java 8+ 运行环境）──────────────────────────
+JPype1>=1.4               # Python/Java 桥接（星环）
+jaydebeapi>=1.2           # JDBC 访问层（星环）
+
+
+# ── 数据处理 ─────────────────────────────────────────────────
+pandas>=2.0
+openpyxl>=3.1
+
+# ── 其他 ─────────────────────────────────────────────────────
+requests>=2.31
+
+# ── 打包工具（仅打包环境需要）────────────────────────────────
+pyinstaller>=6.0

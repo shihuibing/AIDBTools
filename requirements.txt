@@ -1,0 +1,21 @@
+# Windows 依赖（用于 Windows 开发和打包）
+PySide6>=6.6.0
+mysql-connector-python>=8.4
+pymysql>=1.1          # MySQL / MariaDB（SQLAlchemy 当前实际使用）
+psycopg2-binary>=2.9
+pyodbc>=4.0           # Windows SQL Server 驱动
+oracledb>=2.0         # Oracle（替代 cx_Oracle）
+sqlalchemy>=2.0
+JPype1>=1.4           # JDBC 桥接（星环）
+jaydebeapi>=1.2       # JDBC 访问层（星环）
+
+pandas>=2.0
+requests>=2.31
+openpyxl>=3.1
+pyinstaller>=6.0
+openai>=2.21.0,<3
+# Hermes Agent 已内置于 core/vendor/hermes-agent/，无需 pip install
+
+# Linux 额外依赖（银河麒麟/UOS 打包时使用 requirements_linux.txt）
+# pymssql>=2.2        # Linux SQL Server 驱动（替代 pyodbc）
+

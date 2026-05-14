@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>SQL 工作台预览 v2</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #f8f9fb;
+    --surface: #ffffff;
+    --surface-alt: #f1f3f8;
+    --surface-hover: #eaeef7;
+    --accent: #6366f1;
+    --accent-soft: #eef0ff;
+    --accent-hover: #818cf8;
+    --danger: #f43f5e;
+    --danger-hover: #fb7185;
+    --text: #1e2235;
+    --text-soft: #3d4461;
+    --text-muted: #7a82a0;
+    --border: #dde2ed;
+    --border-strong: #c4cce0;
+  }
+
+  body {
+    font-family: "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+    background: var(--bg);
+    padding: 24px;
+    color: var(--text);
+  }
+
+  .workspace-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+
+  /* ── SQL 编辑器区 ── */
+  .sql-editor-panel {
+    padding: 12px 14px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sql-title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .sql-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent-soft);
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 2px 7px;
+    border-radius: 4px;
+    min-width: 34px;
+  }
+
+  .sql-title-text {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  .title-divider {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    margin: 0 8px;
+  }
+
+  .status-pills {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: var(--surface-alt);
+    color: var(--text-muted);
+    font-family: Consolas, monospace;
+  }
+
+  .pill.kbd {
+    font-size: 10px;
+    background: var(--surface-alt);
+    border-color: var(--border-strong);
+  }
+
+  .pill.conn .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--danger);
+  }
+  .pill.conn.connected .dot { background: #10b981; }
+  .pill.conn-label { font-family: system-ui; font-size: 11px; }
+
+  /* AI 行 */
+  .ai-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  .ai-input-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0 10px;
+    gap: 6px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .ai-input-wrap:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(99,102,241,0.12);
+    background: var(--surface);
+  }
+
+  .ai-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 12px;
+    color: var(--text);
+    padding: 6px 0;
+  }
+  .ai-input::placeholder { color: var(--text-muted); }
+
+  /* AI 按钮 */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 5px 10px;
+    transition: all 0.12s;
+    white-space: nowrap;
+  }
+  .btn-gen {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+  }
+  .btn-gen:hover { background: var(--accent-hover); }
+  .btn-opt {
+    background: var(--surface-alt);
+    color: var(--text-soft);
+    border: 1px solid var(--border);
+  }
+  .btn-opt:hover { background: var(--surface-hover); color: var(--text); }
+
+  .btn-sep {
+    width: 1px;
+    height: 18px;
+    background: var(--border);
+    margin: 0 2px;
+  }
+
+  .btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 5px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-size: 12px;
+    transition: all 0.12s;
+    font-family: Consolas, monospace;
+  }
+  .btn-icon:hover { background: var(--surface-hover); color: var(--text-soft); }
+
+  .btn-focus {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 4px 8px;
+    font-size: 11px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all 0.12s;
+  }
+  .btn-focus:hover { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+  .btn-focus.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  /* 标签页行 */
+  .tab-row {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    font-size: 12px;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.12s;
+  }
+  .tab:hover { color: var(--text-soft); background: var(--surface-alt); }
+  .tab.active {
+    color: var(--accent);
+    font-weight: 600;
+    border-bottom-color: var(--accent);
+    background: var(--surface);
+  }
+
+  .tab .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+  }
+  .tab.modified .dot { background: #f59e0b; }
+
+  .tab-close {
+    width: 14px; height: 14px;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: var(--text-muted);
+    opacity: 0;
+    transition: all 0.1s;
+  }
+  .tab:hover .tab-close { opacity: 1; }
+  .tab-close:hover { background: #fee2e2; color: var(--danger); }
+
+  .tab-new {
+    margin-left: auto;
+    padding: 0 8px;
+    font-size: 16px;
+    color: var(--text-muted);
+    cursor: pointer;
+  }
+  .tab-new:hover { color: var(--accent); }
+
+  /* SQL 编辑器 */
+  .sql-editor {
+    background: #fafbfc;
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    min-height: 100px;
+    padding: 12px 14px;
+    font-family: "Cascadia Code", Consolas, monospace;
+    font-size: 12px;
+    color: var(--text-soft);
+    line-height: 1.6;
+    position: relative;
+  }
+
+  /* ── 结果面板 ── */
+  .result-panel {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .result-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 8px;
+  }
+
+  .result-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    margin-right: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .result-title .count {
+    font-size: 11px;
+    font-weight: 500;
+    background: var(--surface-alt);
+    color: var(--text-soft);
+    padding: 1px 6px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+
+  /* 统计条 */
+  .stat-bar {
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    font-family: "Cascadia Code", Consolas, monospace;
+    font-size: 10px;
+    color: var(--accent);
+    background: #ede9fe;
+    border: 1px solid #c7d2fe;
+    border-radius: 4px;
+    padding: 2px 8px;
+    margin-right: 8px;
+  }
+
+  .stat-bar .sep {
+    color: #a5b4fc;
+    margin: 0 6px;
+  }
+
+  /* 工具栏分组 */
+  .toolbar-group {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .toolbar-sep {
+    width: 1px;
+    height: 18px;
+    background: var(--border);
+    margin: 0 4px;
+    border-radius: 1px;
+  }
+
+  /* 工具栏按钮 */
+  .tb-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 8px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.12s;
+    white-space: nowrap;
+  }
+
+  /* view 风格 - 透明底，灰色文字 */
+  .tb-btn.view {
+    background: transparent;
+    color: var(--text-soft);
+  }
+  .tb-btn.view:hover { background: var(--surface-hover); color: var(--text); }
+
+  /* accent 风格 - 淡紫背景，紫色文字 */
+  .tb-btn.accent {
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+  .tb-btn.accent:hover { background: var(--accent); color: #fff; }
+
+  /* danger 风格 - 透明底，红色文字 */
+  .tb-btn.danger {
+    background: transparent;
+    color: var(--danger);
+  }
+  .tb-btn.danger:hover { background: #fee2e2; color: var(--danger); }
+
+  /* pin 风格 */
+  .tb-btn.pin {
+    background: transparent;
+    color: var(--text-soft);
+  }
+  .tb-btn.pin:hover { background: var(--surface-hover); color: var(--text); }
+  .tb-btn.pin.active {
+    background: #fef3c7;
+    color: #d97706;
+  }
+
+  /* 过滤栏 */
+  .filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 4px 10px;
+    margin-bottom: 8px;
+    transition: all 0.15s;
+  }
+  .filter-bar:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(99,102,241,0.08);
+    background: var(--surface);
+  }
+
+  .filter-icon { font-size: 12px; color: var(--text-muted); }
+
+  .filter-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 12px;
+    color: var(--text);
+    padding: 3px 0;
+  }
+  .filter-input::placeholder { color: var(--text-muted); }
+
+  .filter-toggle {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 5px;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    background: transparent;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-family: Consolas, monospace;
+    transition: all 0.12s;
+  }
+  .filter-toggle.on {
+    background: var(--accent-soft);
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .filter-count {
+    font-size: 10px;
+    font-family: Consolas, monospace;
+    color: var(--accent);
+    background: var(--accent-soft);
+    padding: 1px 6px;
+    border-radius: 10px;
+  }
+
+  /* 结果表格 */
+  .result-table-wrap {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+
+  .result-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+
+  .result-table th {
+    background: var(--surface-alt);
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 11px;
+    text-align: left;
+    padding: 7px 12px;
+    border-bottom: 1px solid var(--border);
+    border-right: 1px solid #f1f3f4;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .result-table th:hover { background: var(--surface-hover); }
+  .result-table th .sort { font-size: 9px; opacity: 0.3; margin-left: 3px; }
+  .result-table th.sorted .sort { opacity: 1; color: var(--accent); }
+
+  .result-table td {
+    padding: 6px 12px;
+    border-bottom: 1px solid #f1f3f4;
+    color: var(--text-soft);
+    max-width: 240px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .result-table tr:nth-child(even) td { background: #fafbfc; }
+  .result-table tr:hover td { background: #f0f0ff; }
+  .result-table tr.selected td { background: var(--accent-soft); }
+  .result-table tr.selected:hover td { background: #ddd6fe; }
+
+  .cell-null { color: var(--border-strong); font-style: italic; }
+
+  /* 翻页栏 */
+  .page-bar {
+    display: flex;
+    align-items: center;
+    padding: 6px 8px;
+    background: var(--surface-alt);
+    border-top: 1px solid var(--border);
+    gap: 4px;
+  }
+
+  .page-bar .info {
+    font-size: 11px;
+    color: var(--text-muted);
+    flex: 1;
+  }
+
+  .page-btn {
+    width: 24px; height: 22px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-soft);
+    font-size: 11px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.12s;
+  }
+  .page-btn:hover { background: var(--surface-hover); color: var(--text); }
+
+  .page-spin {
+    width: 36px; height: 22px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    text-align: center;
+    font-size: 11px;
+    color: var(--text);
+    outline: none;
+  }
+
+  .page-label {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .page-size-label {
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .page-size-input {
+    width: 36px; height: 22px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    text-align: center;
+    font-size: 11px;
+    color: var(--text);
+    outline: none;
+  }
+</style>
+</head>
+<body>
+
+<!-- 上卡片：SQL 编辑器 -->
+<div class="workspace-card">
+  <div class="sql-editor-panel">
+    <!-- 标题行 -->
+    <div class="sql-title-row">
+      <div class="sql-badge">SQL</div>
+      <span class="sql-title-text">工作台</span>
+      <div class="title-divider"></div>
+      <div class="status-pills">
+        <div class="pill kbd">F5 执行</div>
+        <div class="pill conn connected">
+          <div class="dot"></div>
+          <span class="pill-conn-label">已连接</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI 行 -->
+    <div class="ai-row">
+      <div class="ai-input-wrap">
+        <span class="filter-icon">⚡</span>
+        <input class="ai-input" placeholder="描述需求，AI 生成 SQL…" />
+      </div>
+      <button class="btn btn-gen">⚡ 生成</button>
+      <button class="btn btn-opt">✨ 优化</button>
+      <div class="btn-sep"></div>
+      <button class="btn-icon">{ }</button>
+      <button class="btn-focus">⛶ 专注</button>
+    </div>
+
+    <!-- 标签页行 -->
+    <div class="tab-row">
+      <div class="tab active">
+        <div class="dot"></div>
+        查询 1
+        <div class="tab-close">✕</div>
+      </div>
+      <div class="tab">
+        <div class="dot"></div>
+        查询 2
+        <div class="tab-close">✕</div>
+      </div>
+      <div class="tab modified">
+        <div class="dot"></div>
+        历史查询
+        <div class="tab-close">✕</div>
+      </div>
+      <div class="tab-new">+</div>
+    </div>
+
+    <!-- SQL 编辑器占位 -->
+    <div class="sql-editor">
+      <span class="kwd">SELECT</span> * <span class="kwd">FROM</span> employees<br>
+      <span class="kwd">WHERE</span> department = <span class="str">'Engineering'</span><br>
+      <span class="kwd">ORDER BY</span> salary <span class="kwd">DESC</span><br>
+      <span class="cmt">-- 光标位置</span><span class="cursor">|</span>
+    </div>
+  </div>
+</div>
+
+<!-- 下卡片：结果面板 -->
+<div class="workspace-card">
+  <div class="result-panel">
+    <!-- 工具栏 -->
+    <div class="result-toolbar">
+      <div class="result-title">
+        结果
+        <span class="count">23,450 行</span>
+      </div>
+
+      <!-- 统计条 -->
+      <div class="stat-bar">
+        SUM(id)=1,450,050<span class="sep">|</span>AVG=28,001<span class="sep">|</span>MAX=500,000
+      </div>
+
+      <!-- 分组1：选择 -->
+      <div class="toolbar-group">
+        <button class="tb-btn view">✓ 全选</button>
+        <button class="tb-btn view">✕ 取消</button>
+      </div>
+      <div class="toolbar-sep"></div>
+
+      <!-- 分组2：复制导出 -->
+      <div class="toolbar-group">
+        <button class="tb-btn view">📋 复制</button>
+        <button class="tb-btn view">⬆ 导出</button>
+      </div>
+      <div class="toolbar-sep"></div>
+
+      <!-- 分组3：编辑（强调色） -->
+      <div class="toolbar-group">
+        <button class="tb-btn accent">✎ 编辑</button>
+        <button class="tb-btn accent">+ 新增</button>
+        <button class="tb-btn danger">🗑 删除</button>
+      </div>
+      <div class="toolbar-sep"></div>
+
+      <!-- 分组4：工具 -->
+      <div class="toolbar-group">
+        <button class="tb-btn pin active">📌 固定</button>
+      </div>
+    </div>
+
+    <!-- 过滤栏 -->
+    <div class="filter-bar">
+      <span class="filter-icon">🔍</span>
+      <input class="filter-input" placeholder="快速过滤（关键词 / 正则）" />
+      <select class="filter-select" style="border:none;background:transparent;font-size:12px;color:var(--text-soft);outline:none;cursor:pointer;">
+        <option>全部列</option>
+        <option>id</option>
+        <option>name</option>
+      </select>
+      <button class="filter-toggle on">Aa</button>
+      <button class="filter-toggle">.*</button>
+      <span class="filter-count">128</span>
+    </div>
+
+    <!-- 结果表格 -->
+    <div class="result-table-wrap">
+      <table class="result-table">
+        <thead>
+          <tr>
+            <th>#<span class="sort">↕</span></th>
+            <th class="sorted">id <span class="sort">↓</span></th>
+            <th>name <span class="sort">↕</span></th>
+            <th>email <span class="sort">↕</span></th>
+            <th>department <span class="sort">↕</span></th>
+            <th>salary <span class="sort">↕</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="selected">
+            <td>✓</td>
+            <td>1</td>
+            <td>张伟</td>
+            <td>zhangwei@company.com</td>
+            <td>Engineering</td>
+            <td>25,000</td>
+          </tr>
+          <tr>
+            <td>✓</td>
+            <td>2</td>
+            <td>李娜</td>
+            <td>lina@company.com</td>
+            <td>Marketing</td>
+            <td>18,500</td>
+          </tr>
+          <tr>
+            <td>✓</td>
+            <td>3</td>
+            <td>王强</td>
+            <td>wangqiang@company.com</td>
+            <td>Engineering</td>
+            <td>32,000</td>
+          </tr>
+          <tr>
+            <td>✓</td>
+            <td>4</td>
+            <td>陈静</td>
+            <td>chenjing@company.com</td>
+            <td>Sales</td>
+            <td class="cell-null">NULL</td>
+          </tr>
+          <tr>
+            <td>✓</td>
+            <td>5</td>
+            <td>刘洋</td>
+            <td>liuyang@company.com</td>
+            <td>HR</td>
+            <td>15,000</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 翻页栏 -->
+    <div class="page-bar">
+      <span class="info">共 23,450 条记录</span>
+      <button class="page-btn">|◁</button>
+      <button class="page-btn">◁</button>
+      <input class="page-spin" value="1" />
+      <span class="page-label">/ 235</span>
+      <button class="page-btn">▷</button>
+      <button class="page-btn">▷|</button>
+      <span class="page-size-label" style="margin-left:8px;">每页</span>
+      <input class="page-size-input" value="100" />
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,56 @@
+============================================================
+AIDBTools ARM 银河麒麟 - 需要复制到 ARM 机器的文件清单
+============================================================
+
+请将以下文件从 Windows 复制到 ARM 机器的对应位置：
+/home/AIDBTools1.0.27/AIDBTools/
+
+核心修复文件（必须）：
+├── core/ai_chat.py                    ← Python 3.9 兼容修复
+├── core/skill_manager.py              ← 已有兼容层
+├── ui/main_window.py                  ← Python 3.9 兼容修复
+├── ui/model_config_window.py          ← Python 3.9 兼容修复
+├── ui/ai_chat_window.py               ← Python 3.9 兼容修复
+├── main.py                            ← PyQt5 兼容层加载
+└── pyqt5_compat.py                    ← PyQt5/PyQt6 兼容
+
+打包脚本（必须）：
+├── build_arm_kylin.sh                 ← PyQt5 打包脚本
+├── AIDBTools_arm_kylin.spec           ← PyInstaller 配置
+├── requirements_linux.txt             ← Linux 依赖
+└── rebuild_arm.sh                     ← 重新打包脚本
+
+文档（可选）：
+├── PYTHON_39_COMPAT_FIX.md            ← 兼容性修复说明
+├── PYQT5_USAGE.md                     ← PyQt5 使用指南
+├── TROUBLESHOOTING_ARM_BUILD.md       ← 故障排查
+├── diagnose.sh                        ← 诊断脚本
+└── fix_pyqt5.sh                       ← PyQt5 修复脚本
+
+============================================================
+快速复制命令（在 Windows PowerShell 中执行）：
+============================================================
+
+# 使用 scp 复制到 ARM 机器（替换 IP 地址）
+$ARM_IP = "192.168.1.100"  # 改成您的 ARM 机器 IP
+$ARM_USER = "root"
+
+# 复制所有修复文件
+scp core/ai_chat.py core/skill_manager.py ui/main_window.py ui/model_config_window.py ui/ai_chat_window.py main.py pyqt5_compat.py build_arm_kylin.sh AIDBTools_arm_kylin.spec requirements_linux.txt rebuild_arm.sh diagnose.sh fix_pyqt5.sh "${ARM_USER}@${ARM_IP}:/home/AIDBTools1.0.27/AIDBTools/"
+
+# 或者使用 rsync（更高效）
+rsync -avz --progress core/ai_chat.py core/skill_manager.py ui/main_window.py ui/model_config_window.py ui/ai_chat_window.py main.py pyqt5_compat.py build_arm_kylin.sh AIDBTools_arm_kylin.spec requirements_linux.txt rebuild_arm.sh diagnose.sh fix_pyqt5.sh "${ARM_USER}@${ARM_IP}:/home/AIDBTools1.0.27/AIDBTools/"
+
+============================================================
+在 ARM 机器上验证文件已更新：
+============================================================
+
+cd /home/AIDBTools1.0.27/AIDBTools
+
+# 检查关键修复
+grep "from __future__ import annotations" core/ai_chat.py
+grep "from typing import Optional" core/ai_chat.py
+
+# 应该能看到输出，如果没有输出说明文件未更新
+
+============================================================

@@ -1,0 +1,51 @@
+# ── 构建产物 ──────────────────────────────────────────────────────
+dist/
+build/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.spec.log
+*.log
+
+# ── 本地用户配置（含 API key / 数据库密码，绝不入库）────────────
+model_config.json
+ui_prefs.json
+app_config/
+
+# ── 本地测试产物 ──────────────────────────────────────────────────
+test_output.txt
+test_results.txt
+build_jdbc.log
+build_jdbc_patched.log
+build_wrapper.log
+build_log.txt
+nul
+
+# ── 星环 ODBC 安装包（体积大，不入仓库；JAR 保留）───────────────
+drivers/transwarp/odbc/
+
+# ── 生成的图片资源 ────────────────────────────────────────────────
+generated-images/
+
+# ── 打包离线依赖包 ────────────────────────────────────────────────
+offline_pkgs/
+
+# ── IDE / 工具 ────────────────────────────────────────────────────
+.codebuddy/
+.lingma/
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ── Python 虚拟环境 ───────────────────────────────────────────────
+.venv/
+venv/
+env/
+
+# ── 旧版打包产物 ──────────────────────────────────────────────────
+old_dist/
+release/
