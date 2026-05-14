@@ -75,7 +75,19 @@
 
 ## 截图
 
-> 截图将在后续版本更新中补充。欢迎贡献截图 PR！
+### SQL 工作台 + AI 对话助手
+
+<div align="center">
+  <img src="screenshots/screenshot1.png" width="90%" alt="团子 SQL 工作台 - Willow Green 主题">
+  <p><sub>SQL 工作台 + AI 对话助手（Willow Green 主题）</sub></p>
+</div>
+
+### 数据库树形浏览 + AI Agent 交互
+
+<div align="center">
+  <img src="screenshots/screenshot2.png" width="90%" alt="团子 数据库浏览 + Agent 模式">
+  <p><sub>数据库树形浏览 + AI Agent 自动执行模式（Violet 主题）</sub></p>
+</div>
 
 ---
 
