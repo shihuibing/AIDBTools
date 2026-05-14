@@ -209,7 +209,7 @@ bash build_kylin_x86.sh
 本项目采用 [Apache License 2.0](LICENSE) 开源许可证。
 
 ```
-Copyright 2026 石慧兵 <1795794877@qq.com>
+Copyright 2026 BINGHUI <1795794877@qq.com>
 
 Licensed under the Apache License, Version 2.0
 ```

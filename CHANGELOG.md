@@ -29,7 +29,7 @@
 | 国产系统 | 源码 + `install_kylin.sh` | 银河麒麟V10 / 统信UOS / Deepin / openEuler |
 
 ### 开发者信息
-- 开发者：石慧兵
+- 开发者：BINGHUI
 - 联系邮箱：1795794877@qq.com
 
 ---
