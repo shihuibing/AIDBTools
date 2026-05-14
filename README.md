@@ -79,11 +79,23 @@
 
 ---
 
+## 下载即用（Windows）
+
+无需安装 Python，直接下载运行：
+
+| 版本 | 下载地址 | 大小 |
+|------|---------|------|
+| v1.1.25（最新版） | [点击下载 AIDBTools_v1.1.25_windows.exe](https://github.com/shihuibing/AIDBTools/releases) | 149MB |
+
+> 💡 exe 文件过大，存放在 **GitHub Releases** 页面，请前往上方链接下载
+
+---
+
 ## 平台支持
 
 | 平台 | 安装方式 | 说明 |
 |------|---------|------|
-| Windows 10/11 | 直接运行 `.exe` / 源码运行 | 推荐 Python 3.11+ |
+| Windows 10/11 | [直接下载 exe（见上方）](https://github.com/shihuibing/AIDBTools/releases) / 源码运行 | 149MB，无需安装，双击即用 |
 | Linux x86_64 | 源码运行 / `build_linux.sh` 打包 | Ubuntu 20.04+、CentOS 7+ |
 | 银河麒麟 V10 ARM | `install_kylin.sh` | aarch64，已测试 |
 | 银河麒麟 V10 x86 | `build_kylin_x86.sh` | 含离线包构建方式 |
